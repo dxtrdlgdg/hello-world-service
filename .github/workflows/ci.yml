@@ -9,9 +9,7 @@ on:
     tags:
       - "v*.*.*"
   pull_request:
-    branches:
-      - "main"
-
+    branches: ["master", "uat", "qa","dev"]
 jobs:
   docker:
     runs-on: ubuntu-latest
