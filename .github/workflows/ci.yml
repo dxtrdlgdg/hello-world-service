@@ -18,11 +18,11 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build, tag, and push image to docker hub
         id: build-image
         env:
-          IMG_REPO: hello-world-service
-          REGISTRY: docker.io/dextercdalogdog/hello-world-service:latest
+          IMG_REPO: ${{ env.REPOSITORY }}
+          REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.REPOSITORY }}:latest
         run: |
           # Build a docker container and
           # push it to ECR so that it can
@@ -31,3 +31,4 @@ jobs:
           docker tag $IMG_REPO:latest $REGISTRY
           docker push $REGISTRY
           echo "::set-output name=image::$REGISTRY"
+          echo "{image}={$REGISTRY}" >> $GITHUB_OUTPUT
