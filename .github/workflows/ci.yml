@@ -64,5 +64,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
