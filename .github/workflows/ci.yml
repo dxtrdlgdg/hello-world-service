@@ -1,34 +1,35 @@
 name: ci
 
 on:
-   pull_request_target:
-    branches: [dev,qa,uat,prod]
+  pull_request:
+    branches: ["dev","qa","uat","prod"]
 
 jobs:
-  docker:
+  build:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
+      
+      - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      -
-        name: Build, tag, and push image to Amazon ECR
+
+      - name: Build, tag, and push image to Amazon ECR
         if: github.event_name != 'pull_request'
         id: build-image
         env:
           IMAGE_TAG: latest-${{ github.sha }}
+          IMG_REPO: hello-world-service
+          REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMG_REPO }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t hello-world-service .
-          docker tag hello-world-service:latest ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/hello-world-service:${IMAGE_TAG}
-          docker push ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/hello-world-service:${IMAGE_TAG}
-          echo "::set-output name=image::${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/hello-world-service:${IMAGE_TAG}"
+          docker build -t ${{ env.IMG_REPO }} .
+          docker tag ${{ env.IMG_REPO }}:latest ${{ env.REGISTRY }}:${{IMAGE_TAG}}
+          docker push ${{ env.REGISTRY }}:${{IMAGE_TAG}}
+          echo "::set-output name=image::${{ env.REGISTRY }}:${{IMAGE_TAG}}"
