@@ -21,8 +21,8 @@ jobs:
       - name: Build, tag, and push image to docker hub
         id: build-image
         env:
-          IMG_REPO: ${{ env.REPOSITORY }}
-          REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.REPOSITORY }}:latest
+          IMG_REPO: ${{ vars.REPOSITORY }}
+          REGISTRY: ${{ vars.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.REPOSITORY }}:latest
         run: |
           # Build a docker container and
           # push it to ECR so that it can
