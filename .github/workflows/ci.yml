@@ -31,4 +31,4 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name == 'pull_request' }}
-          tags: ${{env.REGISTRY}}/${{env.IMG_REPOSITORY}}":latest"
+          tags: ${{env.IMG_REPOSITORY}}:latest
