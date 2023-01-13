@@ -1,0 +1,8 @@
+node_modules/
+npm-debug.log
+*ocker*
+.env*
+*.md
+*.git*
+.all-contributorsrc
+*.tar
