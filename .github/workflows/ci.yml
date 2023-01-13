@@ -22,7 +22,7 @@ jobs:
         if: github.event_name != 'pull_request'
         id: build-image
         env:
-          IMAGE_TAG: latest-${{ github.sha }}
+          IMAGE_TAG: latest
           IMG_REPO: hello-world-service
           REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMG_REPO }}
         run: |
