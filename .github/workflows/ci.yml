@@ -1,16 +1,10 @@
 name: ci
 
 on:
-  schedule:
-    - cron: "0 10 * * *"
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*.*.*"
-  pull_request:
-    branches:
-      - "main"
+   pull_request_target:
+    branches: [dev,qa,uat,prod]
+    types:
+      - closed
 
 jobs:
   docker:
@@ -30,7 +24,7 @@ jobs:
         name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          IMAGE_TAG: lts-${{ github.run_id }}-${{ github.run_number }}-${{ github.sha }}
+          IMAGE_TAG: latest-${{ github.sha }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
