@@ -21,7 +21,6 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          IMAGE_TAG: latest
           IMG_REPO: hello-world-service
           REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMG_REPO }}
         run: |
@@ -29,6 +28,6 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           docker build -t ${{ env.IMG_REPO }} .
-          docker tag ${{ env.IMG_REPO }}:latest ${{ env.REGISTRY }}:${{IMAGE_TAG}}
-          docker push ${{ env.REGISTRY }}:${{IMAGE_TAG}}
-          echo "::set-output name=image::${{ env.REGISTRY }}:${{IMAGE_TAG}}"
+          docker tag ${{ env.IMG_REPO }}:latest ${{ env.REGISTRY }}:lts
+          docker push ${{ env.REGISTRY }}:lts
+          echo "::set-output name=image::${{ env.REGISTRY }}:lts"
