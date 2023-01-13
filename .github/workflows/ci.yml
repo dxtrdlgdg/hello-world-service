@@ -3,14 +3,6 @@ name: ci
 on:
   schedule:
     - cron: "0 10 * * *"
-  push:
-    branches:
-      - "**"
-    tags:
-      - "dev-*"
-      - "uat-*"
-      - "qa-*"
-      - "prod-*"
   pull_request:
     branches: ["master", "uat", "qa","dev"]
 jobs:
