@@ -8,6 +8,7 @@ on:
       - "**"
     tags:
       - "v*.*.*"
+      - "pr***"
   pull_request:
     branches: ["master", "uat", "qa","dev"]
 jobs:
