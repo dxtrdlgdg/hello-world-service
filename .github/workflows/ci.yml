@@ -22,12 +22,12 @@ jobs:
         id: build-image
         env:
           IMG_REPO: hello-world-service
-          REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMG_REPO }}
+          REGISTRY: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/$IMG_REPO:lts-${{ github.sha }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t ${{ env.IMG_REPO }} .
-          docker tag ${{ env.IMG_REPO }}:latest ${{ env.REGISTRY }}:lts
-          docker push ${{ env.REGISTRY }}:lts
-          echo "::set-output name=image::${{ env.REGISTRY }}:lts"
+          docker build -t $IMG_REPO .
+          docker tag $IMG_REPO:latest $REGISTRY
+          docker push $REGISTRY
+          echo "::set-output name=image::$REGISTRY"
