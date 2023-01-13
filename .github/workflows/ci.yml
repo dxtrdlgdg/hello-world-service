@@ -4,12 +4,9 @@ on:
   schedule:
     - cron: "0 10 * * *"
   pull_request:
-    tags:
-      - "dev.v*.*.*"
-      - "qa.v*.*.*"
-      - "uat.v*.*.*"
-      - "prod.v*.*.*"
     branches: ["master", "uat", "qa","dev"]
+    tags:
+      - "v*.*.*"
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -27,11 +24,9 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMG_REPOSITORY }}
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
-            type=sha
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
