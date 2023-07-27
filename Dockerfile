@@ -1,10 +1,16 @@
-FROM node:15-alpine AS builder
+FROM node:slim AS builder
 
-WORKDIR /app
+# Create app directory
+WORKDIR /obs/src
 
+# where available (npm@5+)
 COPY package*.json ./
 
+
 RUN npm install
+RUN npm install --save @nestjs/swagger
+RUN npm install -g concurrently
+
 
 # Bundle app source
 COPY . .
@@ -13,4 +19,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:dev"]
+CMD concurrently "npm run start:prod"
