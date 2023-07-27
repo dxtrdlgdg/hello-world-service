@@ -1,16 +1,48 @@
-FROM node:15-alpine AS builder
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
 
-WORKDIR /app
+FROM node:slim As development
 
-COPY package*.json ./
+WORKDIR /usr/src/app
 
-RUN npm install
+COPY --chown=node:node package*.json ./
 
-# Bundle app source
-COPY . .
+RUN npm ci
+
+COPY --chown=node:node . .
+
+USER node
+
+###################
+# BUILD FOR PRODUCTION
+###################
+
+FROM node:slim As build
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node package*.json ./
+
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+
+COPY --chown=node:node . .
 
 RUN npm run build
 
-EXPOSE 3000
+ENV NODE_ENV production
 
-CMD ["npm", "run", "start:dev"]
+RUN npm ci --only=production && npm cache clean --force
+
+USER node
+
+###################
+# PRODUCTION
+###################
+
+FROM node:slim As production
+
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+CMD [ "node", "dist/main.js" ]
