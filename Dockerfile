@@ -1,22 +1,48 @@
-FROM node:slim AS builder
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
 
-# Create app directory
-WORKDIR /obs/src
+FROM node:slim As development
 
-# where available (npm@5+)
-COPY package*.json ./
+WORKDIR /usr/src/app
 
+COPY --chown=node:node package*.json ./
 
-RUN npm install
-RUN npm install --save @nestjs/swagger
-RUN npm install -g concurrently
+RUN npm ci
 
+COPY --chown=node:node . .
 
-# Bundle app source
-COPY . .
+USER node
+
+###################
+# BUILD FOR PRODUCTION
+###################
+
+FROM node:slim As build
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node package*.json ./
+
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+
+COPY --chown=node:node . .
 
 RUN npm run build
 
-EXPOSE 3000
+ENV NODE_ENV production
 
-CMD concurrently "npm run start:prod"
+RUN npm ci --only=production && npm cache clean --force
+
+USER node
+
+###################
+# PRODUCTION
+###################
+
+FROM node:slim As production
+
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+CMD [ "node", "dist/main.js" ]
